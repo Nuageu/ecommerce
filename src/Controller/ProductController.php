@@ -13,13 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProductController extends AbstractController
 {
@@ -56,10 +58,57 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/admin/product/{id}/edit', name: 'product_edit')]
+
+    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, UrlGeneratorInterface $urlGenertator)
+    {
+        $product = $productRepository->find($id);
+
+        $form = $this->createForm(ProductType::class, $product);
+
+        // $form->setData($product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            // $product = $form->getData();
+            $product->setSlug(strtolower($slugger->slug($product->getName())));
+            $em->flush();
+
+            // $url = $urlGenertator->generate('product_show', [
+            //     'category_slug' => $product->getCategory()->getSlug(),
+            //     'slug' => $product->getSlug()
+            // ]);=>
+
+            // $response->headers->set('location', $url);
+            // $response->setStatusCode(302); =>
+
+            // $response = new RedirectResponse($url);
+            // return $response; =>
+
+            // return $this->redirect($url); =>
+
+            return $this->redirectToRoute('product_show', [
+                'category_slug' => $product->getCategory()->getSlug(),
+                'slug' => $product->getSlug()
+            ]);
+            // dd($product);
+        }
+
+        $formView = $form->createView();
+
+        return $this->render('product/edit.html.twig', [
+            'product' => $product,
+            'formView' => $formView
+        ]);
+    }
+
     #[Route('/admin/product/create', name: 'product_create')]
     public function create(FormFactoryInterface $factory, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
-        $builder = $factory->createBuilder(ProductType::class);
+        $product = new Product;
+
+        $builder = $factory->createBuilder(ProductType::class, $product);
 
         // $builder->setAction();
         // $builder->setMethod();
@@ -68,7 +117,7 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $product = $form->getData();
+            // $product = $form->getData();
             $product->setSlug(strtolower($slugger->slug($product->getName())));
 
             // $product = new Product;
@@ -80,7 +129,11 @@ class ProductController extends AbstractController
             $em->persist($product);
             $em->flush();
 
-            dd($product);
+            return $this->redirectToRoute('product_show', [
+                'category_slug' => $product->getCategory()->getSlug(),
+                'slug' => $product->getSlug()
+            ]);
+            // dd($product);
         }
 
 
