@@ -13,13 +13,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\LessThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -60,8 +67,41 @@ class ProductController extends AbstractController
 
     #[Route('/admin/product/{id}/edit', name: 'product_edit')]
 
-    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, UrlGeneratorInterface $urlGenertator)
+    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, ValidatorInterface $validator)
     {
+        // $client = [
+        //     'nom' => 'tert',
+        //     'prenom' => 'Lior',
+        //     'voiture' => [
+        //         'marque' => 'reter',
+        //         'couleur' => 'Noire'
+        //     ]
+        // ];
+
+
+        // $collection = new Collection([
+        //     'nom' => new NotBlank(['message' => 'le nom ne doit pas être vide!']),
+        //     'prenom' => [
+        //         new NotBlank(['message' => "le prénom ne doit pas être vide!"]),
+        //         new Length(['min' => 3, 'minMessage' => "le prénom ne doit pas moins de 3 caratères"])
+        //     ],
+        //     'voiture' => new Collection([
+        //         'marque' => new NotBlank(['message' => " la marque de la voiture est obligatoire"]),
+        //         'couleur' => new NotBlank(['message' => "la couleur de la voiture est obligatoire"])
+        //     ])
+        // ]);
+
+        // $resultat = $validator->validate($client, $collection);
+
+
+        // Validation via validator\product.yaml
+
+        $product = new Product;
+
+        $resultat = $validator->validate($product);
+
+        dd($resultat);
+
         $product = $productRepository->find($id);
 
         $form = $this->createForm(ProductType::class, $product);
