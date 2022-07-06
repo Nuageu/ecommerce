@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductType extends AbstractType
 {
@@ -25,7 +26,9 @@ class ProductType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom du produit',
-                'attr' => ['placeholder' => 'Tapez le nom du produit']
+                'attr' => ['placeholder' => 'Tapez le nom du produit'],
+                'required' => false
+                // 'constraints' => new NotBlank(['message' => "Validation du formulaire : le nom du produit ne peux pas être vide !"])
             ])
             ->add('shortDescription', TextareaType::class, [
                 'label' => 'Description courte',
@@ -38,7 +41,9 @@ class ProductType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Tapez le prix du produit en euros'
                 ],
-                'divisor' => 100
+                'divisor' => 100,
+                'required' => false
+                // 'constraints' => new NotBlank(['message' => "Le prix du produit est obligatoire !"])
             ])
             ->add('mainPicture', UrlType::class, [
                 'label' => 'Image du produit',

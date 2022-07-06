@@ -96,21 +96,37 @@ class ProductController extends AbstractController
 
         // Validation via validator\product.yaml
 
-        $product = new Product;
+        // $product = new Product;
 
-        $resultat = $validator->validate($product);
+        // $product->setName("l0l");
 
-        dd($resultat);
+        // $resultat = $validator->validate($product);
+
+        // dd($resultat);
+
+
+        //validation des produits via les annotations ajout de groupe voir comment annot , une contrainte 
+        // nom fait automatiquement parti du groupe "Default" , maj obligatoire
+        // $product = new Product;
+
+        // $resultat = $validator->validate($product, null, ["Default", "with-price"]);
+
+        // dd($resultat);
 
         $product = $productRepository->find($id);
 
         $form = $this->createForm(ProductType::class, $product);
 
+        //group validation via annot
+        // $form = $this->createForm(ProductType::class, $product, [
+        //     "validation_groups" => ["with-price", "Default"]
+        // ]);
+
         // $form->setData($product);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             // dd($form->getData());
             // $product = $form->getData();
             $product->setSlug(strtolower($slugger->slug($product->getName())));
@@ -157,7 +173,7 @@ class ProductController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             // $product = $form->getData();
             $product->setSlug(strtolower($slugger->slug($product->getName())));
 
