@@ -15,6 +15,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CategoryController extends AbstractController
 {
+    protected $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
+
+    public function renderMenuList()
+    {
+        // Affichage des catégories dans la navbar
+        //1. aller chercher les catégories dans la base de données (repository)
+        $categories = $this->categoryRepository->findAll();
+
+        //2. Renvoyer le rendu HTML sous la forme d'une Response ($this->render)
+        return $this->render('category/_menu.html.twig', [
+            'categories' => $categories
+        ]);
+    }
+
+
     #[Route('/admin/category/create', name: 'category_create')]
     public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {

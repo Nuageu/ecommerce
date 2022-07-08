@@ -3,6 +3,5 @@ twig:
   form_themes:
     - bootstrap_5_layout.html.twig
 
-when@test:
-  twig:
-    strict_variables: true
+  globals:
+    repoCategory: "@App\\Repository\\CategoryRepository"
