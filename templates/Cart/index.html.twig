@@ -7,40 +7,55 @@
 	<h1>
 		Votre Panier</h1>
 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Produit</th>
-				<th>Prix</th>
-				<th>Quantité</th>
-				<th>Total</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for item in items %}
+	{% if items | length > 0 %}
+
+		<table class="table">
+			<thead>
 				<tr>
-					<td>{{item.product.name}}</td>
-					<td>{{item.product.price  }}
-						&euro;</td>
-					<td>{{item.qty}}</td>
-					<td>{{item.total }}
-						&euro;</td>
-					<td>
-						<a href="{{path('cart_delete', {'id': item.product.id})}}" class="btn btn-sm btn-danger">
-							<i class="fas fa-trash"></i>
-						</a>
-					</td>
+					<th>Produit</th>
+					<th>Prix</th>
+					<th>Quantité</th>
+					<th>Total</th>
+					<th></th>
 				</tr>
-			{% endfor %}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="3">
-					Total :</td>
-				<td colspan="2">{{total }}
-					&euro;</td>
-			</tr>
-		</tfoot>
-	</table>
+			</thead>
+			<tbody>
+				{% for item in items %}
+					<tr>
+						<td>{{item.product.name}}</td>
+						<td>{{item.product.price  }}
+							&euro;</td>
+						<td>
+							<a href="{{path("cart_add" , {'id': item.product.id})}}? returnToCart=true " class=" btn btn-sm btn-primary">
+								<i class="fas fa-plus"></i>
+							</a>
+							{{item.qty}}
+
+							<a href="{{path("cart_decrement" , {'id': item.product.id})}}" class=" btn btn-sm btn-primary">
+								<i class="fas fa-minus"></i>
+							</a>
+						</td>
+						<td>{{item.total }}
+							&euro;</td>
+						<td>
+							<a href="{{path('cart_delete', {'id': item.product.id})}}" class="btn btn-sm btn-danger">
+								<i class="fas fa-trash"></i>
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						Total :</td>
+					<td colspan="2">{{total }}
+						&euro;</td>
+				</tr>
+			</tfoot>
+		</table>
+	{% else %}
+		<h2>Le panier est vide!</h2>
+	{% endif %}
+
 {% endblock %}

@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartController extends AbstractController
 {
     #[Route('/cart/add/{id}', name: 'cart_add', requirements: ["id" => "\d+"])]
-    public function add($id, Request $request, ProductRepository $productRepository, CartService $cartService, SessionInterface $session): Response
+    public function add($id, Request $request, ProductRepository $productRepository, CartService $cartService): Response
     {
 
         //0. Securisation : est ce que le produit exsite
@@ -63,6 +63,11 @@ class CartController extends AbstractController
         $cartService->add($id);
 
         $this->addFlash('success', "Le produit a bien été ajouté au panier");
+
+        // dd($request);
+        if ($request->query->get('returnToCart')) {
+            return $this->redirectToRoute('cart_show');
+        }
 
         // dd($flashbag);
 

@@ -44,6 +44,29 @@ class CartService
         $this->request->getSession()->set('cart', $cart);
     }
 
+    public function decrement(int $id)
+    {
+        $cart = $this->request->getSession()->get('cart', []);
+
+        if (!array_key_exists($id, $cart)) {
+            return;
+        }
+
+        // soit le produit est à 1 en quantity alors il faut simplement le supprimer
+
+        if ($cart[$id] === 1) {
+            $this->remove($id);
+            return;
+        }
+
+
+        //soit le produit est a plus de 1 alors il faut décrémenter
+
+        $cart[$id]--;
+
+        $this->request->getSession()->set('cart', $cart);
+    }
+
     public function getTotal(): int
     {
         $total = 0;
@@ -75,16 +98,5 @@ class CartService
         }
 
         return $detailedCart;
-    }
-
-    public function decrement(int $id)
-    {
-        $cart = $this->request->getSession()->get('cart', []);
-
-        if(!array_key_exists($id,$cart)){
-            return;
-        }
-
-        // soit le produit est à 1 en quantity alors
     }
 }
