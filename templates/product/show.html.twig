@@ -8,8 +8,10 @@
 
 
 {% block body %}
-	<ol class="breadcrumb">
-		<li class="breadcrumb-item ">
+	{# {{dump(app.session.getBag('flashes').get('success'))}} #}
+	{# {{dump(app.flashes('success'))}} #}
+
+		<ol class="breadcrumb"> <li class="breadcrumb-item ">
 			<a href="{{ path('homepage')}}">Acceuil</a>
 		</li>
 		<li class="breadcrumb-item">
@@ -33,7 +35,7 @@
 				{{product.category.name}}
 			</span>
 			<p>{{product.shortDescription}}</p>
-			<a href="#" class="btn btn-success btn-lg">
+			<a href="{{path('cart_add', {'id': product.id})}}" class="btn btn-success btn-lg">
 				<i class="fas fa-shopping-cart"></i>
 				Ajouter au Panier
 			</a>
