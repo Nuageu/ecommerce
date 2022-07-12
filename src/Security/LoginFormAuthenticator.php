@@ -46,9 +46,10 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
         // dd($request);
-        $credentials = $request->get('login');
+        $login = $request->get('login');
 
-        $email = $credentials['email'];
+        $email = $request->get('email');
+        $password = $request->get('password');
         // dd($credentials);
         // dd($request);
         return new Passport(
@@ -56,11 +57,11 @@ class LoginFormAuthenticator extends AbstractAuthenticator
                 $user = $this->userRepository->findOneBy(['email' => $email]);
 
                 if (!$email) {
-                    throw new AuthenticationException("mail pas bon");
+                    throw new AuthenticationException("email pas bon");
                 }
                 return $user;
             }),
-            new PasswordCredentials($credentials['password'])
+            new PasswordCredentials($request->get('password'))
         );
     }
 
@@ -68,7 +69,7 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     {
         try {
             return $userProvider->loadUserByIdentifier($credentials['email']);
-        } catch (AuthenticationException $e) {
+        } catch (UserNotFoundException $e) {
             // throw new UserNotFoundException("Cette adresse email n'est pas connue");
             throw new UserNotFoundException("Cette adresse email n'est pas connue");
         }
@@ -84,11 +85,16 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         return new RedirectResponse('/');
     }
 
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        return new RedirectResponse('/login');
+    }
+
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         // dd($exception);
-        $login = $request->get('login');
-        $request->getSession()->set(Security::LAST_USERNAME, $login['email']);
+        // dd($request);
+        $request->attributes->set(Security::LAST_USERNAME, $request->get('email'));
         return $request->attributes->set(Security::AUTHENTICATION_ERROR, $exception);
     }
 
