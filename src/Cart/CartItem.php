@@ -8,7 +8,7 @@ use App\Entity\Product;
 class CartItem
 {
     public $product;
-    public $qty;
+    public int $qty;
 
 
     public function __construct(Product $product, int $qty)

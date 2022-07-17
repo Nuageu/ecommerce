@@ -83,6 +83,7 @@ class CartService
         return $total;
     }
 
+
     public function getDetailedCartItem(): array
     {
         $detailedCart = [];

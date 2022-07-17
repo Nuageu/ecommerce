@@ -32,7 +32,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
 {
-    #[Route('/{slug}', name: 'product_category')]
+    #[Route('/{slug}', name: 'product_category', priority: -1)]
     public function category($slug, CategoryRepository $categoryRepository): Response
     {
         $category = $categoryRepository->findOneBy([
@@ -49,7 +49,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/{category_slug}/{slug}', name: 'product_show')]
+    #[Route('/{category_slug}/{slug}', name: 'product_show', priority: -1)]
     public function show($slug, ProductRepository $productRepository)
     {
         $product = $productRepository->findOneBy([
