@@ -25,70 +25,9 @@
 	{{parent()}}
 	<script src="https://js.stripe.com/v3/"></script>
 	<script>
-		const stripe = Stripe("pk_test_51LMvh7B7x3vTgZYb3EUJusgms9eLd6z6sPRUreGzT3P3iUKfdNuD8ubSkiIhGNjGJYGZkp2WDREKPp3wlxJ95BYk00YfHGPLKs");
-
-        const clientSecret = '{{ clientSecret }}';
-        function initialize() {
-            document.querySelector("#payment-form").addEventListener("submit", handleSubmit);
-            elements = stripe.elements({ clientSecret });
-
-            const paymentElement = elements.create("payment");
-            paymentElement.mount("#payment-element");
-        }
-
-        async function handleSubmit(e) {
-            e.preventDefault();
-
-            const { error } = await stripe.confirmPayment({
-                elements,
-                confirmParams: {
-                // Make sure to change this to your payment completion page
-                return_url: "{{ url('purchase_payment_success', {'id' : purchase.id})}}",
-                },
-            });
-
-            // This point will only be reached if there is an immediate error when
-            // confirming the payment. Otherwise, your customer will be redirected to
-            // your `return_url`. For some payment methods like iDEAL, your customer will
-            // be redirected to an intermediate site first to authorize the payment, then
-            // redirected to the `return_url`.
-            if (error.type === "card_error" || error.type === "validation_error") {
-                console.log(result);
-            } else {
-                // the payment succeeded!
-                window.location.href = "{{ url('purchase_payment_success', {'id' : purchase.id})}}";
-            }
-        }
-
-// Fetches the payment intent status after payment submission
-        async function checkStatus() {
-            const clientSecret = new URLSearchParams(window.location.search).get(
-                "payment_intent_client_secret"
-            );
-
-            if (!clientSecret) {
-                return;
-            }
-
-            const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
-
-            switch (paymentIntent.status) {
-                case "succeeded":
-                console.log("Payment succeeded!");
-                break;
-                case "processing":
-                console.log("Your payment is processing.");
-                break;
-                case "requires_payment_method":
-                console.log("Your payment was not successful, please try again.");
-                break;
-                default:
-                console.log("Something went wrong.");
-                break;
-            }
-        }
-
-        initialize();
-        checkStatus();
+		const clientSecret = '{{ clientSecret }}';
+    const stripePublicKey = '{{ stripePublicKey }}';
+    const redirectAfterSuccessUrl = "{{ url('purchase_payment_success', {'id' : purchase.id}) }}";
 	</script>
+	<script src="/js/payment.js"></script>
 {% endblock %}
