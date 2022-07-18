@@ -16,6 +16,11 @@ class CartService
         $this->request = $request;
         $this->productRepository = $productRepository;
     }
+
+    public function empty()
+    {
+        $this->request->getSession()->set('cart', []);
+    }
     public function add($id)
     {
         $cart = $this->request->getSession()->get('cart', []);

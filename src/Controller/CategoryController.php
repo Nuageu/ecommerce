@@ -69,7 +69,7 @@ class CategoryController extends AbstractController
 
     #[Route('/admin/category/{id}/edit', name: 'category_edit')]
 
-    // #[isGranted("ROLE_ADMIN", message: "Vous n'avez pas le droit d'acceder à cette ressources")]
+    #[isGranted("ROLE_ADMIN", message: "Vous n'avez pas le droit d'acceder à cette ressources")]
     // #[isGranted("CAN_EDIT", subject: 'id', message: "Vous n'êtes pas le propriètaire de cette catégory")]
 
     public function edit($id, CategoryRepository $categoryRepository, Request $request,  SluggerInterface $slugger, EntityManagerInterface $em, Security $security): Response
